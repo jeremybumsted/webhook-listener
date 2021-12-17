@@ -20,7 +20,7 @@ func main() {
 		b := new(bytes.Buffer)
 		b.ReadFrom(c.Request.Body)
 		res := b.String()
-		fmt.Printf(res)
+		fmt.Printf(res + "\n")
 	})
 
 	r.Run(":" + port)
