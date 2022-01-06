@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -19,10 +20,14 @@ func main() {
 	r.POST("/post", func(c *gin.Context) {
 		b := new(bytes.Buffer)
 		b.ReadFrom(c.Request.Body)
-		rb := b.String()
-		rh := c.Request.Header.Get("Content-Length")
+		rb, err := json.MarshalIndent(b.String(), "<prefix>", "<indent>")
+		if err != nil {
+			log.Fatal(err)
+		}
+		rcl := c.Request.Header.Get("Content-Length")
+		rct := c.Request.Header.Get("Content-Type")
 
-		fmt.Printf("Request Headers:\n" + rh + "Request Body:\n" + rb)
+		fmt.Printf("Content Length: %s\nContent Type: %s\nRequest Body: %s\n", rcl, rct, rb)
 	})
 
 	r.Run(":" + port)
