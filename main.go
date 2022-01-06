@@ -19,8 +19,10 @@ func main() {
 	r.POST("/post", func(c *gin.Context) {
 		b := new(bytes.Buffer)
 		b.ReadFrom(c.Request.Body)
-		res := b.String()
-		fmt.Printf(res + "\n")
+		rb := b.String()
+		rh := c.Request.Header.Get("Content-Length")
+
+		fmt.Printf("Request Headers:\n" + rh + "Request Body:\n" + rb)
 	})
 
 	r.Run(":" + port)
