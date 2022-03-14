@@ -25,9 +25,11 @@ func main() {
 			log.Fatal(err)
 		}
 		rcl := c.Request.Header.Get("Content-Length")
+		rt := c.Request.Header.Get("Request-Timeout")
 		//rct := c.Request.Header.Get("Content-Type")
 
 		fmt.Printf("Content Length: %s\n and the body\n%d", rcl, rb)
+		fmt.Printf("\n Request Timeout: %s", rt)
 	})
 
 	r.Run(":" + port)
