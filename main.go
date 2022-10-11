@@ -130,26 +130,23 @@ func main() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		log.Fatal("$PORT must be set")
+		log.Fatal("Must set $PORT")
 	}
 	r := gin.Default()
-	r.POST("/post", func(c *gin.Context) {
+	r.POST("/build-status", func(c *gin.Context) {
 		b := new(bytes.Buffer)
 		b.ReadFrom(c.Request.Body)
-		// Checking some things with the payload, but not needed right now.
-		// rcl := c.Request.Header.Get("Content-Length")
-		// rt := c.Request.Header.Get("Request-Timeout")
 
-		// fmt.Printf("Content Length: %s\n and the body\n%s", rcl, b.String())
-		// fmt.Printf("\n Request Timeout: %s", rt)
+		x := b.Bytes()
+		req := x
 		var buildkite WebhookPayload
-		if err := json.Unmarshal(b, &buildkite); err != nil {
+		if err := json.Unmarshal(req, &buildkite); err != nil {
 			fmt.Println("Could not unmarshal JSON")
 		}
-		if buildkite.Build.Blocked == true {
-			fmt.Sprintf("!! Build #%s is currently blocked! Unblock it here: %s", buildkite.Build.Number, buildkite.Build.WebURL)
+		if buildkite.Build.Blocked {
+			log.Printf("!! Build #%v is currently blocked! Unblock it here: %v", buildkite.Build.Number, buildkite.Build.WebURL)
 		}
-		fmt.Sprintf("Received event %s for pipeline %s and build %s", buildkite.Event, buildkite.Pipeline.Name, buildkite.Build.Number)
+		log.Printf("Received event %v for pipeline %v and build %v with state %v", buildkite.Event, buildkite.Pipeline.Name, buildkite.Build.Number, buildkite.Build.State)
 	})
 	r.POST("/timeout", func(c *gin.Context) {
 		fmt.Printf("Waiting for 80 seconds")
